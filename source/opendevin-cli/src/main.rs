@@ -187,7 +187,7 @@ async fn main() -> Result<()> {
             chat::default_max_tokens(),
             24,
             perm_mode,
-            noninteractive_deny,
+            if noninteractive_deny { agent::deny_all() } else { Box::new(|_, _| Box::pin(async { true })) },
             |ev| {
                 if let Some(t) = ev.text {
                     print!("{t}");

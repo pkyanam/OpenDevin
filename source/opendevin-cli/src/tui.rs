@@ -42,6 +42,13 @@ struct Ui {
     scroll: u16,
     last_usage: String,
     cwd: String,
+    pending_approval: Option<PendingApproval>,
+}
+
+struct PendingApproval {
+    name: String,
+    args: Value,
+    reply: tokio::sync::oneshot::Sender<bool>,
 }
 
 type FrameRx = mpsc::Receiver<FrameEvent>;
@@ -52,6 +59,7 @@ enum FrameEvent {
     ToolResult(String),
     Done,
     Err(String),
+    Approval(String, Value, tokio::sync::oneshot::Sender<bool>),
 }
 
 pub async fn tui_repl(
@@ -79,6 +87,7 @@ pub async fn tui_repl(
         cwd: std::env::current_dir()
             .map(|p| p.display().to_string())
             .unwrap_or_default(),
+        pending_approval: None,
     }));
 
     enable_raw_mode()?;
@@ -137,6 +146,11 @@ async fn run_loop(
                     u.busy = false;
                     u.status = "error".into();
                     u.messages.push(UiMsg { role: "error".into(), text: e, meta: String::new() });
+                }
+                FrameEvent::Approval(name, args, reply) => {
+                    let n = name.clone();
+                    u.pending_approval = Some(PendingApproval { name, args, reply });
+                    u.status = format!("approve {n}? (y/n)");
                 }
             }
         }
@@ -199,6 +213,13 @@ async fn run_loop(
                         let usage = u.last_usage.clone();
                         u.messages.push(UiMsg { role: "system".into(), text: format!("last turn usage: {usage}"), meta: "usage".into() });
                     }
+                    KeyAction::Approve(yes) => {
+                        let mut u = ui.lock().await;
+                        if let Some(p) = u.pending_approval.take() {
+                            let _ = p.reply.send(yes);
+                            u.status = if yes { "approved".into() } else { "denied".into() };
+                        }
+                    }
                     KeyAction::None => {}
                 }
             }
@@ -228,9 +249,21 @@ enum KeyAction {
     Help,
     ToggleThinking,
     Usage,
+    Approve(bool),
 }
 
 async fn handle_key(k: KeyEvent, ui: Arc<Mutex<Ui>>) -> KeyAction {
+    // approval modal takes over the keys
+    {
+        let u = ui.lock().await;
+        if u.pending_approval.is_some() {
+            return match k.code {
+                KeyCode::Char('y') | KeyCode::Char('Y') => KeyAction::Approve(true),
+                KeyCode::Char('n') | KeyCode::Char('N') | KeyCode::Esc => KeyAction::Approve(false),
+                _ => KeyAction::None,
+            };
+        }
+    }
     match k.code {
         KeyCode::Esc => KeyAction::Quit,
         KeyCode::Enter => {
@@ -318,8 +351,17 @@ async fn submit(ui: &Arc<Mutex<Ui>>, client: &Client, tx: &mpsc::Sender<FrameEve
 
     let tx2 = tx.clone();
     let client = client.clone();
-    let thinking = thinking;
-    let cwd = cwd;
+    let tx3 = tx.clone();
+    let approve: crate::agent::ApproveFn = Box::new(move |name, args| {
+        let tx = tx3.clone();
+        Box::pin(async move {
+            let (reply_tx, reply_rx) = tokio::sync::oneshot::channel();
+            if tx.send(FrameEvent::Approval(name, args, reply_tx)).await.is_err() {
+                return false;
+            }
+            reply_rx.await.unwrap_or(false)
+        })
+    });
     tokio::spawn(async move {
         let _ = std::env::set_current_dir(&cwd);
         let outcome = agent::run_agent(
@@ -329,7 +371,7 @@ async fn submit(ui: &Arc<Mutex<Ui>>, client: &Client, tx: &mpsc::Sender<FrameEve
             crate::chat::default_max_tokens(),
             24,
             mode,
-            false,
+            approve,
             |ev| {
                 if let Some(t) = ev.text {
                     let _ = tx2.try_send(FrameEvent::Text(t));
@@ -433,12 +475,25 @@ fn draw(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<io::Stdout>>,
         f.render_widget(status_bar, chunks[1]);
 
         let input_style = if u.busy { Style::default().fg(Color::DarkGray) } else { Style::default() };
-        let input = Paragraph::new(Line::from(vec![
-            Span::styled("> ", Style::default().fg(Color::Cyan)),
-            Span::raw(&u.input),
-        ]))
-        .style(input_style)
-        .block(Block::default().borders(Borders::ALL));
+        let input_content = if let Some(p) = &u.pending_approval {
+            let summary = match p.name.as_str() {
+                "exec" => p.args["command"].as_str().unwrap_or("").to_string(),
+                _ => serde_json::to_string(&p.args).unwrap_or_default(),
+            };
+            vec![
+                Span::styled("approve ", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                Span::styled(&p.name, Style::default().fg(Color::Yellow)),
+                Span::raw(format!(" [{summary}]  (y/n)")),
+            ]
+        } else {
+            vec![
+                Span::styled("> ", Style::default().fg(Color::Cyan)),
+                Span::raw(&u.input),
+            ]
+        };
+        let input = Paragraph::new(Line::from(input_content))
+            .style(input_style)
+            .block(Block::default().borders(Borders::ALL));
         f.render_widget(input, chunks[2]);
         f.set_cursor_position((chunks[2].x + 2 + u.input.chars().count() as u16, chunks[2].y + 1));
     })?;

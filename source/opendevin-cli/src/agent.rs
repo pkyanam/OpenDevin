@@ -1,13 +1,18 @@
 //! Agent loop: stream a turn, execute tool calls, loop until the model
 //! finishes — with permission modes (auto / accept-edits / bypass).
 
+use std::future::Future;
+use std::pin::Pin;
+
 use anyhow::Result;
 use serde_json::{json, Value};
 
 use crate::chat::{self, TurnOutcome};
 use crate::protocol::Client;
 use crate::tools::{ToolContext, tool_definitions};
-use crate::wire::ChatMessageResponse;
+
+/// Async approval callback: given the tool name + args, decide whether to run it.
+pub type ApproveFn = Box<dyn FnMut(String, Value) -> Pin<Box<dyn Future<Output = bool> + Send>> + Send>;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PermissionMode {
@@ -66,6 +71,7 @@ pub struct AgentEvent {
 
 /// Run the full agent loop over one user message.
 /// `on_event` receives progress events (streamed text, tool calls, results).
+/// `approve` is awaited when a tool needs user approval.
 pub async fn run_agent<F>(
     client: &Client,
     messages: &mut Vec<Value>,
@@ -73,7 +79,7 @@ pub async fn run_agent<F>(
     max_tokens: u32,
     max_rounds: u32,
     mode: PermissionMode,
-    approve_all: bool,
+    mut approve: ApproveFn,
     mut on_event: F,
 ) -> Result<()>
 where
@@ -118,7 +124,11 @@ where
                 .unwrap_or(json!({}));
             on_event(AgentEvent { text: None, tool_call: Some(tc.clone()), tool_result: None, done: false });
 
-            let approved = mode.auto_approves(&name) || (!approve_all && prompt_approve(&name, &args));
+            let approved = if mode.auto_approves(&name) {
+                true
+            } else {
+                approve(name.clone(), args.clone()).await
+            };
             let result = if approved {
                 ctx.execute(&name, &args).unwrap_or_else(|e| format!("tool error: {e}"))
             } else {
@@ -137,21 +147,9 @@ where
     Ok(())
 }
 
-fn prompt_approve(name: &str, args: &Value) -> bool {
-    if std::env::var("OPENDEVIN_NONINTERACTIVE").is_ok() {
-        return false;
-    }
-    use std::io::Write;
-    let summary = match name {
-        "exec" => args["command"].as_str().unwrap_or("").to_string(),
-        "write" => format!("{} ({} chars)", args["file_path"].as_str().unwrap_or("?"), args["content"].as_str().map(|c| c.len()).unwrap_or(0)),
-        _ => args.to_string(),
-    };
-    print!("approve {name}? [{summary}] (y/n) ", );
-    std::io::stdout().flush().ok();
-    let mut line = String::new();
-    std::io::stdin().read_line(&mut line).ok();
-    matches!(line.trim().to_lowercase().as_str(), "y" | "yes" | "a" | "always")
+/// A deny-all approval (for non-interactive `-p` mode).
+pub fn deny_all() -> ApproveFn {
+    Box::new(|_, _| Box::pin(async { false }))
 }
 
 fn truncate(s: &str, max: usize) -> String {
