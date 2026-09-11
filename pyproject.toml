@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opendevin-bridge"
+version = "0.1.0"
+description = "OpenAI-compatible bridge to Cognition's Devin model API (ConnectRPC GetChatMessage)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "requests>=2.31",
+]
+
+[project.scripts]
+opendevin = "opendevin:main"
+
+[tool.setuptools]
+packages = ["opendevin"]

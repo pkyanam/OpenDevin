@@ -1,0 +1,16 @@
+LICENSE
+README.md
+pyproject.toml
+opendevin/__init__.py
+opendevin/__main__.py
+opendevin/protocol.py
+opendevin/server.py
+opendevin/tui.py
+opendevin/ui.py
+opendevin/wire.py
+opendevin_bridge.egg-info/PKG-INFO
+opendevin_bridge.egg-info/SOURCES.txt
+opendevin_bridge.egg-info/dependency_links.txt
+opendevin_bridge.egg-info/entry_points.txt
+opendevin_bridge.egg-info/requires.txt
+opendevin_bridge.egg-info/top_level.txt

@@ -1,0 +1,854 @@
+[
+ {
+  "display": "GPT-4.1",
+  "uid": "MODEL_CHAT_GPT_4_1_2025_04_14"
+ },
+ {
+  "display": "Claude Opus 4.5",
+  "uid": "MODEL_CLAUDE_4_5_OPUS"
+ },
+ {
+  "display": "Claude Opus 4.5 Thinking",
+  "uid": "MODEL_CLAUDE_4_5_OPUS_THINKING"
+ },
+ {
+  "display": "Gemini 3 Flash High",
+  "uid": "MODEL_GOOGLE_GEMINI_3_0_FLASH_HIGH"
+ },
+ {
+  "display": "Gemini 3 Flash Low",
+  "uid": "MODEL_GOOGLE_GEMINI_3_0_FLASH_LOW"
+ },
+ {
+  "display": "Gemini 3 Flash Medium",
+  "uid": "MODEL_GOOGLE_GEMINI_3_0_FLASH_MEDIUM"
+ },
+ {
+  "display": "Gemini 3 Flash Minimal",
+  "uid": "MODEL_GOOGLE_GEMINI_3_0_FLASH_MINIMAL"
+ },
+ {
+  "display": "GPT-5.2 High Thinking",
+  "uid": "MODEL_GPT_5_2_HIGH"
+ },
+ {
+  "display": "GPT-5.2 Low Thinking",
+  "uid": "MODEL_GPT_5_2_LOW"
+ },
+ {
+  "display": "GPT-5.2 Medium Thinking",
+  "uid": "MODEL_GPT_5_2_MEDIUM"
+ },
+ {
+  "display": "GPT-5.2 No Thinking",
+  "uid": "MODEL_GPT_5_2_NONE"
+ },
+ {
+  "display": "GPT-5.2 XHigh Thinking",
+  "uid": "MODEL_GPT_5_2_XHIGH"
+ },
+ {
+  "display": "Claude Haiku 4.5",
+  "uid": "MODEL_PRIVATE_11"
+ },
+ {
+  "display": "GPT-5.1 No Thinking",
+  "uid": "MODEL_PRIVATE_12"
+ },
+ {
+  "display": "GPT-5.1 Low Thinking",
+  "uid": "MODEL_PRIVATE_13"
+ },
+ {
+  "display": "GPT-5.1 Medium Thinking",
+  "uid": "MODEL_PRIVATE_14"
+ },
+ {
+  "display": "GPT-5.1 High Thinking",
+  "uid": "MODEL_PRIVATE_15"
+ },
+ {
+  "display": "Claude Sonnet 4.5",
+  "uid": "MODEL_PRIVATE_2"
+ },
+ {
+  "display": "Claude Sonnet 4.5 Thinking",
+  "uid": "MODEL_PRIVATE_3"
+ },
+ {
+  "display": "Adaptive",
+  "uid": "adaptive"
+ },
+ {
+  "display": "Claude Fable 5 High",
+  "uid": "claude-5-fable-high"
+ },
+ {
+  "display": "Claude Fable 5 Low",
+  "uid": "claude-5-fable-low"
+ },
+ {
+  "display": "Claude Fable 5 Max",
+  "uid": "claude-5-fable-max"
+ },
+ {
+  "display": "Claude Fable 5 Medium",
+  "uid": "claude-5-fable-medium"
+ },
+ {
+  "display": "Claude Fable 5 XHigh",
+  "uid": "claude-5-fable-xhigh"
+ },
+ {
+  "display": "Claude Fable 5.1 High",
+  "uid": "claude-fable-5-1-high"
+ },
+ {
+  "display": "Claude Fable 5.1 Low",
+  "uid": "claude-fable-5-1-low"
+ },
+ {
+  "display": "Claude Fable 5.1 Max",
+  "uid": "claude-fable-5-1-max"
+ },
+ {
+  "display": "Claude Fable 5.1 Medium",
+  "uid": "claude-fable-5-1-medium"
+ },
+ {
+  "display": "Claude Fable 5.1 XHigh",
+  "uid": "claude-fable-5-1-xhigh"
+ },
+ {
+  "display": "Claude Opus 4.6",
+  "uid": "claude-opus-4-6"
+ },
+ {
+  "display": "Claude Opus 4.6 1M",
+  "uid": "claude-opus-4-6-1m"
+ },
+ {
+  "display": "Claude Opus 4.6 Thinking",
+  "uid": "claude-opus-4-6-thinking"
+ },
+ {
+  "display": "Claude Opus 4.6 Thinking 1M",
+  "uid": "claude-opus-4-6-thinking-1m"
+ },
+ {
+  "display": "Claude Opus 4.7 High",
+  "uid": "claude-opus-4-7-high"
+ },
+ {
+  "display": "Claude Opus 4.7 Low",
+  "uid": "claude-opus-4-7-low"
+ },
+ {
+  "display": "Claude Opus 4.7 Max",
+  "uid": "claude-opus-4-7-max"
+ },
+ {
+  "display": "Claude Opus 4.7 Medium",
+  "uid": "claude-opus-4-7-medium"
+ },
+ {
+  "display": "Claude Opus 4.7 XHigh",
+  "uid": "claude-opus-4-7-xhigh"
+ },
+ {
+  "display": "Claude Opus 4.8 High",
+  "uid": "claude-opus-4-8-high"
+ },
+ {
+  "display": "Claude Opus 4.8 High Fast",
+  "uid": "claude-opus-4-8-high-fast"
+ },
+ {
+  "display": "Claude Opus 4.8 Low",
+  "uid": "claude-opus-4-8-low"
+ },
+ {
+  "display": "Claude Opus 4.8 Low Fast",
+  "uid": "claude-opus-4-8-low-fast"
+ },
+ {
+  "display": "Claude Opus 4.8 Max",
+  "uid": "claude-opus-4-8-max"
+ },
+ {
+  "display": "Claude Opus 4.8 Max Fast",
+  "uid": "claude-opus-4-8-max-fast"
+ },
+ {
+  "display": "Claude Opus 4.8 Medium",
+  "uid": "claude-opus-4-8-medium"
+ },
+ {
+  "display": "Claude Opus 4.8 Medium Fast",
+  "uid": "claude-opus-4-8-medium-fast"
+ },
+ {
+  "display": "Claude Opus 4.8 XHigh",
+  "uid": "claude-opus-4-8-xhigh"
+ },
+ {
+  "display": "Claude Opus 4.8 XHigh Fast",
+  "uid": "claude-opus-4-8-xhigh-fast"
+ },
+ {
+  "display": "Claude Opus 5 High",
+  "uid": "claude-opus-5-high"
+ },
+ {
+  "display": "Claude Opus 5 High Fast",
+  "uid": "claude-opus-5-high-fast"
+ },
+ {
+  "display": "Claude Opus 5 Low",
+  "uid": "claude-opus-5-low"
+ },
+ {
+  "display": "Claude Opus 5 Low Fast",
+  "uid": "claude-opus-5-low-fast"
+ },
+ {
+  "display": "Claude Opus 5 Max",
+  "uid": "claude-opus-5-max"
+ },
+ {
+  "display": "Claude Opus 5 Max Fast",
+  "uid": "claude-opus-5-max-fast"
+ },
+ {
+  "display": "Claude Opus 5 Medium",
+  "uid": "claude-opus-5-medium"
+ },
+ {
+  "display": "Claude Opus 5 Medium Fast",
+  "uid": "claude-opus-5-medium-fast"
+ },
+ {
+  "display": "Claude Opus 5 XHigh",
+  "uid": "claude-opus-5-xhigh"
+ },
+ {
+  "display": "Claude Opus 5 XHigh Fast",
+  "uid": "claude-opus-5-xhigh-fast"
+ },
+ {
+  "display": "Claude Sonnet 4.6",
+  "uid": "claude-sonnet-4-6"
+ },
+ {
+  "display": "Claude Sonnet 4.6 1M",
+  "uid": "claude-sonnet-4-6-1m"
+ },
+ {
+  "display": "Claude Sonnet 4.6 Thinking",
+  "uid": "claude-sonnet-4-6-thinking"
+ },
+ {
+  "display": "Claude Sonnet 4.6 Thinking 1M",
+  "uid": "claude-sonnet-4-6-thinking-1m"
+ },
+ {
+  "display": "Claude Sonnet 5 High",
+  "uid": "claude-sonnet-5-high"
+ },
+ {
+  "display": "Claude Sonnet 5 Low",
+  "uid": "claude-sonnet-5-low"
+ },
+ {
+  "display": "Claude Sonnet 5 Max",
+  "uid": "claude-sonnet-5-max"
+ },
+ {
+  "display": "Claude Sonnet 5 Medium",
+  "uid": "claude-sonnet-5-medium"
+ },
+ {
+  "display": "Claude Sonnet 5 XHigh",
+  "uid": "claude-sonnet-5-xhigh"
+ },
+ {
+  "display": "DeepSeek V4.1 Flash High",
+  "uid": "deepseek-v4-1-flash-high"
+ },
+ {
+  "display": "DeepSeek V4.1 Flash Max",
+  "uid": "deepseek-v4-1-flash-max"
+ },
+ {
+  "display": "DeepSeek V4 Flash High",
+  "uid": "deepseek-v4-flash-high"
+ },
+ {
+  "display": "DeepSeek V4 Flash Max",
+  "uid": "deepseek-v4-flash-max"
+ },
+ {
+  "display": "DeepSeek V4 Pro High",
+  "uid": "deepseek-v4-pro-high"
+ },
+ {
+  "display": "DeepSeek V4 Pro Max",
+  "uid": "deepseek-v4-pro-max"
+ },
+ {
+  "display": "Gemini 3.1 Pro High Thinking",
+  "uid": "gemini-3-1-pro-high"
+ },
+ {
+  "display": "Gemini 3.1 Pro Low Thinking",
+  "uid": "gemini-3-1-pro-low"
+ },
+ {
+  "display": "Gemini 3.5 Flash High",
+  "uid": "gemini-3-5-flash-high"
+ },
+ {
+  "display": "Gemini 3.5 Flash Low",
+  "uid": "gemini-3-5-flash-low"
+ },
+ {
+  "display": "Gemini 3.5 Flash Medium",
+  "uid": "gemini-3-5-flash-medium"
+ },
+ {
+  "display": "Gemini 3.5 Flash Minimal",
+  "uid": "gemini-3-5-flash-minimal"
+ },
+ {
+  "display": "Gemini 3.6 Flash High",
+  "uid": "gemini-3-6-flash-high"
+ },
+ {
+  "display": "Gemini 3.6 Flash Low",
+  "uid": "gemini-3-6-flash-low"
+ },
+ {
+  "display": "Gemini 3.6 Flash Medium",
+  "uid": "gemini-3-6-flash-medium"
+ },
+ {
+  "display": "Gemini 3.6 Flash Minimal",
+  "uid": "gemini-3-6-flash-minimal"
+ },
+ {
+  "display": "Gemini 3.7 Flash High",
+  "uid": "gemini-3-7-flash-high"
+ },
+ {
+  "display": "Gemini 3.7 Flash Low",
+  "uid": "gemini-3-7-flash-low"
+ },
+ {
+  "display": "Gemini 3.7 Flash Medium",
+  "uid": "gemini-3-7-flash-medium"
+ },
+ {
+  "display": "GLM-5.2 High",
+  "uid": "glm-5-2"
+ },
+ {
+  "display": "GLM-5.2 High 1M",
+  "uid": "glm-5-2-1m"
+ },
+ {
+  "display": "GLM-5.2 Max",
+  "uid": "glm-5-2-max"
+ },
+ {
+  "display": "GLM-5.2 Max 1M",
+  "uid": "glm-5-2-max-1m"
+ },
+ {
+  "display": "GLM-5.2 No Thinking",
+  "uid": "glm-5-2-none"
+ },
+ {
+  "display": "GLM-5.2 No Thinking 1M",
+  "uid": "glm-5-2-none-1m"
+ },
+ {
+  "display": "GLM-5.3 Flash High",
+  "uid": "glm-5-3-flash-high"
+ },
+ {
+  "display": "GLM-5.3 Flash Low",
+  "uid": "glm-5-3-flash-low"
+ },
+ {
+  "display": "GLM-5.3 Flash Max",
+  "uid": "glm-5-3-flash-max"
+ },
+ {
+  "display": "GLM-5.3 High",
+  "uid": "glm-5-3-high"
+ },
+ {
+  "display": "GLM-5.3 Low",
+  "uid": "glm-5-3-low"
+ },
+ {
+  "display": "GLM-5.3 Max",
+  "uid": "glm-5-3-max"
+ },
+ {
+  "display": "GPT-5.3-Codex High",
+  "uid": "gpt-5-3-codex-high"
+ },
+ {
+  "display": "GPT-5.3-Codex High Fast",
+  "uid": "gpt-5-3-codex-high-priority"
+ },
+ {
+  "display": "GPT-5.3-Codex Low",
+  "uid": "gpt-5-3-codex-low"
+ },
+ {
+  "display": "GPT-5.3-Codex Low Fast",
+  "uid": "gpt-5-3-codex-low-priority"
+ },
+ {
+  "display": "GPT-5.3-Codex Medium",
+  "uid": "gpt-5-3-codex-medium"
+ },
+ {
+  "display": "GPT-5.3-Codex Medium Fast",
+  "uid": "gpt-5-3-codex-medium-priority"
+ },
+ {
+  "display": "GPT-5.3-Codex X-High",
+  "uid": "gpt-5-3-codex-xhigh"
+ },
+ {
+  "display": "GPT-5.3-Codex XHigh Fast",
+  "uid": "gpt-5-3-codex-xhigh-priority"
+ },
+ {
+  "display": "GPT-5.4 High Thinking",
+  "uid": "gpt-5-4-high"
+ },
+ {
+  "display": "GPT-5.4 High Thinking Fast",
+  "uid": "gpt-5-4-high-priority"
+ },
+ {
+  "display": "GPT-5.4 Low Thinking",
+  "uid": "gpt-5-4-low"
+ },
+ {
+  "display": "GPT-5.4 Low Thinking Fast",
+  "uid": "gpt-5-4-low-priority"
+ },
+ {
+  "display": "GPT-5.4 Medium Thinking",
+  "uid": "gpt-5-4-medium"
+ },
+ {
+  "display": "GPT-5.4 Medium Thinking Fast",
+  "uid": "gpt-5-4-medium-priority"
+ },
+ {
+  "display": "GPT-5.4 Mini High Thinking",
+  "uid": "gpt-5-4-mini-high"
+ },
+ {
+  "display": "GPT-5.4 Mini Low Thinking",
+  "uid": "gpt-5-4-mini-low"
+ },
+ {
+  "display": "GPT-5.4 Mini Medium Thinking",
+  "uid": "gpt-5-4-mini-medium"
+ },
+ {
+  "display": "GPT-5.4 Mini XHigh Thinking",
+  "uid": "gpt-5-4-mini-xhigh"
+ },
+ {
+  "display": "GPT-5.4 No Thinking",
+  "uid": "gpt-5-4-none"
+ },
+ {
+  "display": "GPT-5.4 No Thinking Fast",
+  "uid": "gpt-5-4-none-priority"
+ },
+ {
+  "display": "GPT-5.4 XHigh Thinking",
+  "uid": "gpt-5-4-xhigh"
+ },
+ {
+  "display": "GPT-5.4 XHigh Thinking Fast",
+  "uid": "gpt-5-4-xhigh-priority"
+ },
+ {
+  "display": "GPT-5.5 High Thinking",
+  "uid": "gpt-5-5-high"
+ },
+ {
+  "display": "GPT-5.5 High Thinking Fast",
+  "uid": "gpt-5-5-high-priority"
+ },
+ {
+  "display": "GPT-5.5 Low Thinking",
+  "uid": "gpt-5-5-low"
+ },
+ {
+  "display": "GPT-5.5 Low Thinking Fast",
+  "uid": "gpt-5-5-low-priority"
+ },
+ {
+  "display": "GPT-5.5 Medium Thinking",
+  "uid": "gpt-5-5-medium"
+ },
+ {
+  "display": "GPT-5.5 Medium Thinking Fast",
+  "uid": "gpt-5-5-medium-priority"
+ },
+ {
+  "display": "GPT-5.5 No Thinking",
+  "uid": "gpt-5-5-none"
+ },
+ {
+  "display": "GPT-5.5 No Thinking Fast",
+  "uid": "gpt-5-5-none-priority"
+ },
+ {
+  "display": "GPT 5.5 Review",
+  "uid": "gpt-5-5-review"
+ },
+ {
+  "display": "GPT-5.5 XHigh Thinking",
+  "uid": "gpt-5-5-xhigh"
+ },
+ {
+  "display": "GPT-5.5 XHigh Thinking Fast",
+  "uid": "gpt-5-5-xhigh-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna High Thinking",
+  "uid": "gpt-5-6-luna-high"
+ },
+ {
+  "display": "GPT-5.6 Luna High Thinking Fast",
+  "uid": "gpt-5-6-luna-high-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna Low Thinking",
+  "uid": "gpt-5-6-luna-low"
+ },
+ {
+  "display": "GPT-5.6 Luna Low Thinking Fast",
+  "uid": "gpt-5-6-luna-low-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna Max Thinking",
+  "uid": "gpt-5-6-luna-max"
+ },
+ {
+  "display": "GPT-5.6 Luna Max Thinking Fast",
+  "uid": "gpt-5-6-luna-max-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna Medium Thinking",
+  "uid": "gpt-5-6-luna-medium"
+ },
+ {
+  "display": "GPT-5.6 Luna Medium Thinking Fast",
+  "uid": "gpt-5-6-luna-medium-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna No Thinking",
+  "uid": "gpt-5-6-luna-none"
+ },
+ {
+  "display": "GPT-5.6 Luna No Thinking Fast",
+  "uid": "gpt-5-6-luna-none-priority"
+ },
+ {
+  "display": "GPT-5.6 Luna XHigh Thinking",
+  "uid": "gpt-5-6-luna-xhigh"
+ },
+ {
+  "display": "GPT-5.6 Luna XHigh Thinking Fast",
+  "uid": "gpt-5-6-luna-xhigh-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol High Thinking",
+  "uid": "gpt-5-6-sol-high"
+ },
+ {
+  "display": "GPT-5.6 Sol High Thinking Fast",
+  "uid": "gpt-5-6-sol-high-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol Low Thinking",
+  "uid": "gpt-5-6-sol-low"
+ },
+ {
+  "display": "GPT-5.6 Sol Low Thinking Fast",
+  "uid": "gpt-5-6-sol-low-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol Max Thinking",
+  "uid": "gpt-5-6-sol-max"
+ },
+ {
+  "display": "GPT-5.6 Sol Max Thinking Fast",
+  "uid": "gpt-5-6-sol-max-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol Medium Thinking",
+  "uid": "gpt-5-6-sol-medium"
+ },
+ {
+  "display": "GPT-5.6 Sol Medium Thinking Fast",
+  "uid": "gpt-5-6-sol-medium-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol No Thinking",
+  "uid": "gpt-5-6-sol-none"
+ },
+ {
+  "display": "GPT-5.6 Sol No Thinking Fast",
+  "uid": "gpt-5-6-sol-none-priority"
+ },
+ {
+  "display": "GPT-5.6 Sol XHigh Thinking",
+  "uid": "gpt-5-6-sol-xhigh"
+ },
+ {
+  "display": "GPT-5.6 Sol XHigh Thinking Fast",
+  "uid": "gpt-5-6-sol-xhigh-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra High Thinking",
+  "uid": "gpt-5-6-terra-high"
+ },
+ {
+  "display": "GPT-5.6 Terra High Thinking Fast",
+  "uid": "gpt-5-6-terra-high-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra Low Thinking",
+  "uid": "gpt-5-6-terra-low"
+ },
+ {
+  "display": "GPT-5.6 Terra Low Thinking Fast",
+  "uid": "gpt-5-6-terra-low-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra Max Thinking",
+  "uid": "gpt-5-6-terra-max"
+ },
+ {
+  "display": "GPT-5.6 Terra Max Thinking Fast",
+  "uid": "gpt-5-6-terra-max-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra Medium Thinking",
+  "uid": "gpt-5-6-terra-medium"
+ },
+ {
+  "display": "GPT-5.6 Terra Medium Thinking Fast",
+  "uid": "gpt-5-6-terra-medium-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra No Thinking",
+  "uid": "gpt-5-6-terra-none"
+ },
+ {
+  "display": "GPT-5.6 Terra No Thinking Fast",
+  "uid": "gpt-5-6-terra-none-priority"
+ },
+ {
+  "display": "GPT-5.6 Terra XHigh Thinking",
+  "uid": "gpt-5-6-terra-xhigh"
+ },
+ {
+  "display": "GPT-5.6 Terra XHigh Thinking Fast",
+  "uid": "gpt-5-6-terra-xhigh-priority"
+ },
+ {
+  "display": "GPT-6 Astra High Thinking",
+  "uid": "gpt-6-astra-high"
+ },
+ {
+  "display": "GPT-6 Astra High Thinking Fast",
+  "uid": "gpt-6-astra-high-priority"
+ },
+ {
+  "display": "GPT-6 Astra Low Thinking",
+  "uid": "gpt-6-astra-low"
+ },
+ {
+  "display": "GPT-6 Astra Low Thinking Fast",
+  "uid": "gpt-6-astra-low-priority"
+ },
+ {
+  "display": "GPT-6 Astra Max Thinking",
+  "uid": "gpt-6-astra-max"
+ },
+ {
+  "display": "GPT-6 Astra Max Thinking Fast",
+  "uid": "gpt-6-astra-max-priority"
+ },
+ {
+  "display": "GPT-6 Astra Medium Thinking",
+  "uid": "gpt-6-astra-medium"
+ },
+ {
+  "display": "GPT-6 Astra Medium Thinking Fast",
+  "uid": "gpt-6-astra-medium-priority"
+ },
+ {
+  "display": "GPT-6 Astra XHigh Thinking",
+  "uid": "gpt-6-astra-xhigh"
+ },
+ {
+  "display": "GPT-6 Astra XHigh Thinking Fast",
+  "uid": "gpt-6-astra-xhigh-priority"
+ },
+ {
+  "display": "Grok 4.5 High",
+  "uid": "grok-4-5-high"
+ },
+ {
+  "display": "Grok 4.5 Low",
+  "uid": "grok-4-5-low"
+ },
+ {
+  "display": "Grok 4.5 Medium",
+  "uid": "grok-4-5-medium"
+ },
+ {
+  "display": "Grok 4.6 High",
+  "uid": "grok-4-6-high"
+ },
+ {
+  "display": "Grok 4.6 Low",
+  "uid": "grok-4-6-low"
+ },
+ {
+  "display": "Grok 4.6 Medium",
+  "uid": "grok-4-6-medium"
+ },
+ {
+  "display": "Grok 4.6 XHigh",
+  "uid": "grok-4-6-xhigh"
+ },
+ {
+  "display": "Inkling High",
+  "uid": "inkling-high"
+ },
+ {
+  "display": "Inkling Low",
+  "uid": "inkling-low"
+ },
+ {
+  "display": "Inkling Max",
+  "uid": "inkling-max"
+ },
+ {
+  "display": "Inkling Medium",
+  "uid": "inkling-medium"
+ },
+ {
+  "display": "Inkling None",
+  "uid": "inkling-none"
+ },
+ {
+  "display": "Inkling X-High",
+  "uid": "inkling-xhigh"
+ },
+ {
+  "display": "Kimi K2.6",
+  "uid": "kimi-k2-6"
+ },
+ {
+  "display": "Kimi K2.7",
+  "uid": "kimi-k2-7"
+ },
+ {
+  "display": "Kimi K3 High",
+  "uid": "kimi-k3-high"
+ },
+ {
+  "display": "Kimi K3 Low",
+  "uid": "kimi-k3-low"
+ },
+ {
+  "display": "Kimi K3 Max",
+  "uid": "kimi-k3-max"
+ },
+ {
+  "display": "Memory Migration Default",
+  "uid": "memory-migration-default"
+ },
+ {
+  "display": "Nemotron 3 Ultra High",
+  "uid": "nemotron-3-ultra-high"
+ },
+ {
+  "display": "Nemotron 3 Ultra Medium",
+  "uid": "nemotron-3-ultra-medium"
+ },
+ {
+  "display": "Nemotron 3 Ultra None",
+  "uid": "nemotron-3-ultra-none"
+ },
+ {
+  "display": "Opus 4.7 Review",
+  "uid": "opus-4-7-review"
+ },
+ {
+  "display": "Subagent Default",
+  "uid": "subagent-default"
+ },
+ {
+  "display": "SWE-1.6",
+  "uid": "swe-1-6"
+ },
+ {
+  "display": "SWE-1.6 Fast",
+  "uid": "swe-1-6-fast"
+ },
+ {
+  "display": "SWE-1.6 Slow",
+  "uid": "swe-1-6-slow"
+ },
+ {
+  "display": "SWE-1.7 Max",
+  "uid": "swe-1-7"
+ },
+ {
+  "display": "SWE-1.7 Lightning Max",
+  "uid": "swe-1-7-lightning"
+ },
+ {
+  "display": "SWE-1.7 Lightning Medium",
+  "uid": "swe-1-7-lightning-medium"
+ },
+ {
+  "display": "SWE-1.7 Medium",
+  "uid": "swe-1-7-medium"
+ },
+ {
+  "display": "SWE-2 High",
+  "uid": "swe-2-high"
+ },
+ {
+  "display": "SWE-2 Max",
+  "uid": "swe-2-max"
+ },
+ {
+  "display": "SWE-2 Medium",
+  "uid": "swe-2-medium"
+ },
+ {
+  "display": "SWE-check",
+  "uid": "swe-check"
+ }
+]

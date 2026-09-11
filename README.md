@@ -1,0 +1,62 @@
+# OpenDevin
+
+Use **Devin's models** (SWE-1.6, Claude Opus, GPT-5.6…) from **any** OpenAI-compatible
+tool — Hermes, Claude Code, Cursor, `curl`.
+
+```
+┌──────────┐   OpenAI API   ┌──────────┐   ConnectRPC   ┌─────────────────┐
+│ your app │ ─────────────► │ OpenDevin │ ─────────────► │ Devin/Cognition │
+│ (Hermes…) │  /v1/chat/     │ (bridge)  │  GetChatMessage │  model backend  │
+└──────────┘   completions   └──────────┘                └─────────────────┘
+```
+
+## Setup (one command)
+
+```bash
+./setup.sh
+```
+
+Requires a Devin CLI login: `devin auth login` (creates
+`~/.local/share/devin/credentials.toml`).
+
+## Run
+
+```bash
+python -m opendevin serve            # OpenAI-compatible server on :8321
+python -m opendevin chat             # or the built-in terminal chat
+```
+
+Then open **http://127.0.0.1:8321** for the web chat, or point any client at
+`http://127.0.0.1:8321/v1`.
+
+## Try it
+
+```bash
+curl http://127.0.0.1:8321/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{"model":"swe-2-high","messages":[{"role":"user","content":"hi"}]}'
+```
+
+## Models
+
+`GET /v1/models` lists the models your Devin account can use (Claude Opus 5,
+GPT-5.6 Sol/Luna/Terra, Gemini 3.x, SWE-1.7/2, Grok 4.6, …). `swe-2-high`
+is the dependable default.
+
+## How it works
+
+OpenDevin speaks the same wire protocol as the real `devin` CLI — ConnectRPC
+`GetChatMessage` against `server.codeium.com` — reverse-engineered and verified
+against live traffic. Details: [`docs/`](docs/).
+
+- `docs/01-recon.md` — binary & workspace reverse-engineering
+- `docs/02-api-auth.md` — endpoints & auth
+- `docs/03-decompilation.md` — decompilation methodology
+- `docs/04-protocol-capture.md` — the captured wire protocol
+- `docs/PROTOCOL.md` — protocol & bridge internals
+- `docs/HERMES.md` — Hermes config
+
+## License / disclaimer
+
+For research and interoperability. OpenDevin is not affiliated with Cognition
+AI. Using it consumes your Devin account's quota; free plans have rate limits.
