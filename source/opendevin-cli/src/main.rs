@@ -5,17 +5,23 @@
 //! (`opendevin serve`), web UI, and a live model catalog.
 //! Protocol implemented from scratch and verified against the real backend.
 
+mod agent;
 mod auth;
 mod chat;
 mod models;
 mod protocol;
 mod server;
+mod sessions;
+mod tools;
+mod tui;
 mod wire;
 
-use std::path::PathBuf;
+
 
 use anyhow::Result;
+#[allow(unused_imports)]
 use clap::{Args, Parser, Subcommand};
+use serde_json::json;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -36,6 +42,14 @@ pub struct Cli {
     /// Model to use (default: swe-2-high)
     #[arg(short = 'm', long = "model", global = true)]
     pub model: Option<String>,
+
+    /// Continue the most recent conversation (resume)
+    #[arg(short = 'c', long = "continue")]
+    pub continue_session: bool,
+
+    /// Resume a specific conversation by id
+    #[arg(short = 'r', long = "resume", value_name = "SESSION_ID")]
+    pub resume: Option<String>,
 }
 
 #[derive(Subcommand, Debug)]
@@ -152,11 +166,41 @@ pub struct ServeArgs {
 async fn main() -> Result<()> {
     let cli = Cli::parse();
     let model = cli.model.clone().unwrap_or_else(|| models::DEFAULT_MODEL.to_string());
+    let resume_id = cli.resume.clone();
+    let continue_flag = cli.continue_session;
 
-    // one-shot print mode
-    if let Some(prompt) = cli.print.flatten() {
+    // one-shot print mode — runs the full agent (tools included), like `devin -p`
+    if let Some(prompt) = cli.print.clone().flatten() {
         let client = protocol::Client::new(auth::resolve_api_key()?)?;
-        return chat::print_mode(&client, &prompt, &model, chat::default_max_tokens()).await;
+        let mut msgs = vec![json!({"role": "user", "content": prompt})];
+        use std::io::Write;
+        agent::run_agent(
+            &client,
+            &mut msgs,
+            &model,
+            chat::default_max_tokens(),
+            24,
+            agent::PermissionMode::Auto,
+            true, // non-interactive: deny tools that would need approval
+            |ev| {
+                if let Some(t) = ev.text {
+                    print!("{t}");
+                    std::io::stdout().flush().ok();
+                }
+                if let Some(tc) = ev.tool_call {
+                    let name = tc["function"]["name"].as_str().unwrap_or("?");
+                    let args = tc["function"]["arguments"].as_str().unwrap_or("");
+                    println!("\n⚙ {name} {args}");
+                }
+                if let Some(r) = ev.tool_result {
+                    let first_line = r.lines().next().unwrap_or("").chars().take(120).collect::<String>();
+                    println!("↩ {first_line}");
+                }
+            },
+        )
+        .await?;
+        println!();
+        return Ok(());
     }
 
     match cli.command {
@@ -188,7 +232,13 @@ async fn main() -> Result<()> {
             let client = protocol::Client::new(auth::resolve_api_key()?)?;
             let m = args.model.clone().unwrap_or(model);
             let prompt = args.prompt.join(" ");
-            chat::repl(&client, (!prompt.is_empty()).then_some(prompt.as_str()), &m).await
+            let mut initial = load_resume(resume_id.clone(), continue_flag).unwrap_or_default();
+            if !prompt.is_empty() {
+                initial.push(json!({"role": "user", "content": prompt}));
+            }
+            let msgs = tui::tui_repl(client, initial, m).await?;
+            save_session(resume_id.clone(), msgs)?;
+            Ok(())
         }
         Some(Command::List(args)) => run_list(args),
         Some(Command::Rm(args)) => run_rm(args),
@@ -198,7 +248,10 @@ async fn main() -> Result<()> {
         }
         None => {
             let client = protocol::Client::new(auth::resolve_api_key()?)?;
-            chat::repl(&client, None, &model).await
+            let mut initial = load_resume(resume_id.clone(), continue_flag).unwrap_or_default();
+            let msgs = tui::tui_repl(client, initial, model).await?;
+            save_session(resume_id.clone(), msgs)?;
+            Ok(())
         }
     }
 }
@@ -256,30 +309,36 @@ fn run_update(args: UpdateArgs) -> Result<()> {
     Ok(())
 }
 
-fn session_file() -> PathBuf {
-    auth::data_dir().unwrap_or_else(|_| PathBuf::from(".")).join("sessions.json")
+fn load_resume(resume_id: Option<String>, continue_flag: bool) -> Option<Vec<serde_json::Value>> {
+    if let Some(id) = resume_id {
+        return sessions::find_by_id(&id).map(|s| s.messages);
+    }
+    if continue_flag {
+        return sessions::most_recent().map(|s| s.messages);
+    }
+    None
+}
+
+fn save_session(resume_id: Option<String>, messages: Vec<serde_json::Value>) -> Result<()> {
+    sessions::upsert(resume_id, messages)?;
+    Ok(())
 }
 
 fn run_list(args: ListArgs) -> Result<()> {
-    let path = session_file();
-    let sessions: Vec<serde_json::Value> = if path.exists() {
-        serde_json::from_str(&std::fs::read_to_string(&path)?).unwrap_or_default()
-    } else {
-        Vec::new()
-    };
+    let sessions = sessions::load_all();
     match args.format.as_str() {
         "json" => println!("{}", serde_json::to_string_pretty(&sessions)?),
         "csv" => {
             for s in &sessions {
-                println!("{},{}", s["id"].as_str().unwrap_or(""), s["title"].as_str().unwrap_or(""));
+                println!("{},{}", s.id, s.title);
             }
         }
         _ => {
             if sessions.is_empty() {
-                println!("No sessions yet. (REPL history is saved as you chat.)");
+                println!("No sessions yet. (conversations are saved as you chat)");
             }
             for s in &sessions {
-                println!("{}  {}", s["id"].as_str().unwrap_or(""), s["title"].as_str().unwrap_or(""));
+                println!("{}  {}  {}", s.id, s.title, s.updated);
             }
         }
     }
@@ -287,19 +346,14 @@ fn run_list(args: ListArgs) -> Result<()> {
 }
 
 fn run_rm(args: RmArgs) -> Result<()> {
-    let path = session_file();
-    let mut sessions: Vec<serde_json::Value> = if path.exists() {
-        serde_json::from_str(&std::fs::read_to_string(&path)?).unwrap_or_default()
-    } else {
-        Vec::new()
-    };
+    let mut sessions = sessions::load_all();
     let before = sessions.len();
-    sessions.retain(|s| s["id"].as_str() != Some(args.target.as_str()));
+    sessions.retain(|s| !s.id.starts_with(&args.target));
     if sessions.len() == before && !args.force {
         println!("No session with id '{}'", args.target);
         return Ok(());
     }
-    std::fs::write(&path, serde_json::to_string_pretty(&sessions)?)?;
+    sessions::save_all(&sessions)?;
     println!("Removed session {}.", args.target);
     Ok(())
 }

@@ -1,124 +1,129 @@
 //! Chat engine: streaming conversation against the Devin model backend.
+//! Frames are consumed incrementally and handed to a per-frame callback so
+//! callers (print mode, TUI) can render tokens as they arrive — no lag.
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use serde_json::{json, Value};
 
 use crate::models::DEFAULT_MODEL;
 use crate::protocol::Client;
+use crate::wire::ChatMessageResponse;
+
 
 pub const SYSTEM_PROMPT: &str = "You are OpenDevin, an interactive command line agent. \
 Answer concisely and helpfully. You can use the tools you are given when they help.";
 
-/// Run one turn against the model; return the accumulated (content, tool_calls).
-pub async fn run_turn(
+#[derive(Default, Clone)]
+pub struct TurnOutcome {
+    pub content: String,
+    pub thinking: String,
+    pub tool_calls: Vec<Value>,
+    pub stop_reason: u32,
+    pub usage: Option<crate::wire::Usage>,
+    pub model: String,
+}
+
+/// Run one turn; `on_frame` is invoked for every streamed frame as it arrives.
+pub async fn run_turn<F>(
     client: &Client,
     messages: &[Value],
     tools: &[Value],
     model: &str,
     max_tokens: u32,
-) -> Result<(String, Vec<Value>)> {
+    mut on_frame: F,
+) -> Result<TurnOutcome>
+where
+    F: FnMut(&ChatMessageResponse),
+{
     let req = client.build_request(SYSTEM_PROMPT, messages, tools, model, max_tokens);
-    let frames = client.chat_stream(&req).await?;
-    let mut content = String::new();
-    let mut thinking = String::new();
-    let mut tool_calls: Vec<Value> = Vec::new();
-    for frame in frames {
+    let mut rx = client.chat_stream(&req).await?;
+    let mut out = TurnOutcome {
+        model: model.to_string(),
+        ..Default::default()
+    };
+    let mut current_tool_id = String::new();
+    while let Some(frame) = rx.recv().await {
         match frame {
             Ok(msg) => {
-                content.push_str(&msg.delta_text);
-                thinking.push_str(&msg.delta_thinking);
-                for tc in &msg.tool_calls {
-                    tool_calls.push(json!({
-                        "id": tc.id,
-                        "type": "function",
-                        "function": {
-                            "name": tc.name,
-                            "arguments": tc.arguments_json,
+                on_frame(&msg);
+                out.content.push_str(&msg.delta_text);
+                out.thinking.push_str(&msg.delta_thinking);
+                if !msg.tool_calls.is_empty() {
+                    for tc in &msg.tool_calls {
+                        // Deltas arrive fragmented with empty or changing ids:
+                        // fall back to the last known id, then merge fields.
+                        if !tc.id.is_empty() {
+                            current_tool_id = tc.id.clone();
                         }
-                    }));
+                        let id = if current_tool_id.is_empty() {
+                            tc.id.clone()
+                        } else {
+                            current_tool_id.clone()
+                        };
+                        let idx = out.tool_calls.iter().position(|v| v["id"] == id);
+                        match idx {
+                            Some(i) => {
+                                if !tc.name.is_empty() {
+                                    out.tool_calls[i]["function"]["name"] = json!(tc.name);
+                                }
+                                if !tc.arguments_json.is_empty() {
+                                    let prev = out.tool_calls[i]["function"]["arguments"].as_str().unwrap_or("").to_string();
+                                    let cur = tc.arguments_json.clone();
+                                    let acc = if cur.starts_with(&prev) { cur } else { format!("{prev}{cur}") };
+                                    out.tool_calls[i]["function"]["arguments"] = json!(acc);
+                                }
+                            }
+                            None => {
+                                out.tool_calls.push(json!({
+                                    "id": id,
+                                    "type": "function",
+                                    "function": {"name": tc.name, "arguments": tc.arguments_json}
+                                }));
+                            }
+                        }
+                    }
+                }
+                if msg.stop_reason != 0 {
+                    out.stop_reason = msg.stop_reason;
+                }
+                if let Some(u) = &msg.usage {
+                    out.usage = Some(u.clone());
                 }
             }
             Err(e) => {
-                eprintln!("upstream: {e}");
-                anyhow::bail!("upstream error: {e}");
+                if e == "stream ended" {
+                    break;
+                }
+                bail!("upstream error: {e}");
             }
         }
     }
-    if !thinking.is_empty() {
-        eprintln!("(thinking) {}", trim(&thinking, 300));
-    }
-    Ok((content, tool_calls))
+    Ok(out)
 }
 
-/// One-shot print mode (-p).
+/// One-shot print mode (-p): streams to stdout as tokens arrive.
 pub async fn print_mode(client: &Client, prompt: &str, model: &str, max_tokens: u32) -> Result<()> {
     let messages = vec![json!({"role": "user", "content": prompt})];
-    let (content, _) = run_turn(client, &messages, &[], model, max_tokens).await?;
-    println!("{}", content.trim());
-    Ok(())
-}
-
-/// Interactive REPL.
-pub async fn repl(client: &Client, initial_prompt: Option<&str>, model: &str) -> Result<()> {
-    let mut messages: Vec<Value> = Vec::new();
-    if let Some(p) = initial_prompt {
-        messages.push(json!({"role": "user", "content": p}));
-    }
-    println!("OpenDevin — model: {model}  (type /model to switch, /quit to exit)");
-    loop {
-        let line = prompt_user();
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        if matches!(line, "quit" | "exit" | "/quit" | "/q") {
-            break;
-        }
-        if line == "/models" {
-            let models = crate::models::list(client).await?;
-            for (_, uid) in &models {
-                println!("  {uid}");
+    let mut printed_any = false;
+    let mut thinking_started = false;
+    run_turn(client, &messages, &[], model, max_tokens, |msg| {
+        use std::io::Write;
+        if !msg.delta_thinking.is_empty() {
+            if !thinking_started {
+                eprint!("(thinking) ");
+                thinking_started = true;
             }
-            continue;
+            eprint!("{}", msg.delta_thinking);
+            std::io::stderr().flush().ok();
+        } else if !msg.delta_text.is_empty() {
+            print!("{}", msg.delta_text);
+            std::io::stdout().flush().ok();
+            printed_any = true;
         }
-        messages.push(json!({"role": "user", "content": line}));
-        match run_turn(client, &messages, &[], model, 8192).await {
-            Ok((content, tool_calls)) => {
-                println!("{}", content.trim());
-                let mut assistant = json!({"role": "assistant", "content": content.trim()});
-                if !tool_calls.is_empty() {
-                    assistant["tool_calls"] = Value::Array(tool_calls);
-                }
-                messages.push(assistant);
-            }
-            Err(e) => eprintln!("error: {e}"),
-        }
-    }
+    })
+    .await?;
+    println!();
     Ok(())
-}
-
-fn prompt_user() -> String {
-    use std::io::Write;
-    print!("you> ");
-    std::io::stdout().flush().ok();
-    let mut line = String::new();
-    match std::io::stdin().read_line(&mut line) {
-        Ok(0) | Err(_) => {
-            println!();
-            std::process::exit(0);
-        }
-        _ => {}
-    }
-    line
-}
-
-fn trim(s: &str, max: usize) -> String {
-    let mut t = s.trim().to_string();
-    if t.len() > max {
-        t.truncate(max);
-        t.push_str("…");
-    }
-    t
 }
 
 pub fn default_max_tokens() -> u32 {

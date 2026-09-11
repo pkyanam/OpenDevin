@@ -4,8 +4,6 @@
 use std::io::Cursor;
 
 use anyhow::{bail, Context, Result};
-use base64::Engine;
-
 use crate::wire::{self, ChatRequest, ChatMessageResponse};
 
 pub const UPSTREAM: &str = "https://server.codeium.com";
@@ -49,11 +47,12 @@ impl Client {
         h
     }
 
-    /// POST GetChatMessage and yield the streamed response frames.
+    /// POST GetChatMessage and yield the streamed response frames **incrementally**
+    /// (each frame arrives as the server sends it — no full-response buffering).
     pub async fn chat_stream(
         &self,
         req: &ChatRequest,
-    ) -> Result<Vec<Result<ChatMessageResponse, String>>> {
+    ) -> Result<tokio::sync::mpsc::Receiver<Result<ChatMessageResponse, String>>> {
         let body = wire::encode_get_chat_message_request(req);
         let gz = gzip(&body);
         // Connect framing: [flags=0x01 gzip][len BE][payload]
@@ -76,8 +75,57 @@ impl Client {
             let text = resp.text().await.unwrap_or_default();
             bail!("upstream HTTP {status}: {text}");
         }
-        let bytes = resp.bytes().await.context("read response body")?;
-        parse_connect_frames(&bytes)
+
+        let (tx, rx) = tokio::sync::mpsc::channel(256);
+        let mut stream = resp.bytes_stream();
+        tokio::spawn(async move {
+            use futures::StreamExt;
+            let mut buf: Vec<u8> = Vec::new();
+            while let Some(chunk) = stream.next().await {
+                let chunk = match chunk {
+                    Ok(c) => c,
+                    Err(e) => {
+                        let _ = tx.send(Err(format!("read error: {e}"))).await;
+                        return;
+                    }
+                };
+                buf.extend_from_slice(&chunk);
+                loop {
+                    if buf.len() < 5 {
+                        break;
+                    }
+                    let flags = buf[0];
+                    let ln =
+                        u32::from_be_bytes([buf[1], buf[2], buf[3], buf[4]]) as usize;
+                    if buf.len() < 5 + ln {
+                        break;
+                    }
+                    let mut payload = buf[5..5 + ln].to_vec();
+                    buf.drain(..5 + ln);
+                    if flags & 0x01 != 0 {
+                        payload = gunzip(&payload);
+                    }
+                    if flags & 0x02 != 0 {
+                        if let Ok(txt) = String::from_utf8(payload.clone()) {
+                            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&txt) {
+                                if let Some(e) = v.get("error") {
+                                    let code = e["code"].as_str().unwrap_or("error");
+                                    let msg = e["message"].as_str().unwrap_or("unknown");
+                                    let _ = tx.send(Err(format!("{code}: {msg}"))).await;
+                                }
+                            }
+                        }
+                        continue;
+                    }
+                    let msg = wire::parse_chat_message_response(&payload);
+                    if tx.send(Ok(msg)).await.is_err() {
+                        return;
+                    }
+                }
+            }
+            let _ = tx.send(Err("stream ended".into())).await;
+        });
+        Ok(rx)
     }
 
     /// Fetch the live model registry (unary, application/proto).
@@ -261,49 +309,9 @@ fn gunzip(data: &[u8]) -> Vec<u8> {
     out
 }
 
-/// Parse a Connect stream: repeated [flags(1) len(4 BE) payload].
-/// Trailer frames (flags & 0x02) carry a JSON error envelope.
-fn parse_connect_frames(bytes: &[u8]) -> Result<Vec<Result<ChatMessageResponse, String>>> {
-    let mut out = Vec::new();
-    let mut i = 0usize;
-    while i + 5 <= bytes.len() {
-        let flags = bytes[i];
-        let ln = u32::from_be_bytes([bytes[i + 1], bytes[i + 2], bytes[i + 3], bytes[i + 4]]) as usize;
-        i += 5;
-        if i + ln > bytes.len() {
-            break;
-        }
-        let mut payload = bytes[i..i + ln].to_vec();
-        i += ln;
-        if flags & 0x01 != 0 {
-            payload = gunzip(&payload);
-        }
-        if flags & 0x02 != 0 {
-            if let Ok(txt) = String::from_utf8(payload.clone()) {
-                if let Ok(v) = serde_json::from_str::<serde_json::Value>(&txt) {
-                    if let Some(e) = v.get("error") {
-                        let code = e["code"].as_str().unwrap_or("error");
-                        let msg = e["message"].as_str().unwrap_or("unknown");
-                        out.push(Err(format!("{code}: {msg}")));
-                        continue;
-                    }
-                }
-            }
-            continue;
-        }
-        out.push(Ok(wire::parse_chat_message_response(&payload)));
-    }
-    Ok(out)
-}
-
 fn uuid_5(s: &str) -> uuid::Uuid {
     // UUIDv5 (name-based, deterministic) — mirrors the Python bridge's uuid5.
     uuid::Uuid::new_v5(&uuid::Uuid::NAMESPACE_URL, s.as_bytes())
-}
-
-/// Base64 helper (kept for auth flows that need it).
-pub fn b64(data: &[u8]) -> String {
-    base64::engine::general_purpose::STANDARD.encode(data)
 }
 
 /// Install `flate2`/`rand` are pulled via the crate; ensure no unused import warnings.

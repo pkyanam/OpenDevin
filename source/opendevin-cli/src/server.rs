@@ -66,8 +66,10 @@ async fn chat_completions(
     let messages: Vec<Value> = body["messages"].as_array().cloned().unwrap_or_default();
     let tools: Vec<Value> = body["tools"].as_array().cloned().unwrap_or_default();
 
-    match chat::run_turn(&st.client, &messages, &tools, &model, max_tokens).await {
-        Ok((content, tool_calls)) => {
+    match chat::run_turn(&st.client, &messages, &tools, &model, max_tokens, |_| {}).await {
+        Ok(out) => {
+            let content = out.content;
+            let tool_calls = out.tool_calls;
             if stream {
                 sse_stream(model, content, tool_calls)
             } else {
