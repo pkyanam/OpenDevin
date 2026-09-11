@@ -1,0 +1,10 @@
+[package]
+name = "agent-ext"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Agent extensions: skills, rules, hooks, plugins"
+
+[dependencies]

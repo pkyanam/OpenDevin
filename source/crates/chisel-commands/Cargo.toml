@@ -1,0 +1,14 @@
+[package]
+name = "chisel-commands"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Devin CLI subcommands (doctor, models, rules, skills) — reconstruction skeleton"
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true

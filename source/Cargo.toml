@@ -1,0 +1,88 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/chisel",
+    "crates/chisel-agent",
+    "crates/chisel-commands",
+    "crates/chisel-core",
+    "crates/chisel-api",
+    "crates/chisel-ui",
+    "crates/chisel-server",
+    "crates/chisel-mcp",
+    "crates/chisel-acp-client",
+    "crates/chisel-acp-relay",
+    "crates/chisel-cloud-bridge",
+    "crates/chisel-proxy-config",
+    "crates/chisel-updater",
+    "crates/agent-ext",
+    "crates/affogato",
+    "crates/toolbox",
+    "crates/toolbox-core",
+    "crates/local-agent",
+    "crates/local-tools-client",
+    "crates/config-importers",
+    "crates/user-config",
+    "crates/version",
+    "crates/utils",
+    "crates/workspace",
+    "crates/sandbox-runtime",
+    "crates/browser-preview",
+    "crates/scrollback",
+    "crates/plugin",
+    "crates/plugin-host",
+    "crates/inference",
+    "crates/connect-rpc",
+    "crates/session-events",
+    "crates/export",
+    "crates/hands",
+    "crates/cache",
+    "crates/message-forest",
+    "crates/web-framework-markdown",
+    "crates/barista",
+    "crates/fx",
+    "crates/host-api",
+    "crates/registrytoolbox",
+    "crates/registrytoolbox-core",
+    "crates/readline",
+    "crates/vtparse",
+]
+
+[workspace.package]
+version = "3000.10.21"
+edition = "2021"
+rust-version = "1.85"
+license = "UNLICENSED"
+authors = ["Cognition AI"]
+
+[workspace.dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive", "env", "wrap_help"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls", "stream", "multipart"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+time = { version = "0.3", features = ["serde"] }
+url = "2"
+dirs = "6"
+pathdiff = "0.2"
+globset = "0.4"
+ignore = "0.4"
+shellexpand = "3"
+percent-encoding = "2"
+base64 = "0.22"
+sha2 = "0.10"
+hex = "0.4"
+futures = "0.3"
+tungstenite = "0.28"
+tokio-tungstenite = "0.28"
+sentry = "0.47"
+webpki-roots = "1"
+rustls = "0.23"
+rand = "0.9"
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
