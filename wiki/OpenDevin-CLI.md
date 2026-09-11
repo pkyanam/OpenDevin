@@ -7,6 +7,13 @@ wire protocol directly (no `devin` binary involved).
 
 Source: `source/opendevin-cli/` (Rust; `cargo build -p opendevin --release`).
 
+Install (macOS note: taskgated kills unsigned copies — ad-hoc sign):
+```bash
+cargo build -p opendevin --release
+cp target/release/opendevin ~/.local/bin/opendevin
+codesign -s - ~/.local/bin/opendevin   # required on macOS
+```
+
 ## Commands (Devin-CLI compatible)
 
 ```

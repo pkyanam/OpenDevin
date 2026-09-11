@@ -50,6 +50,10 @@ pub struct Cli {
     /// Resume a specific conversation by id
     #[arg(short = 'r', long = "resume", value_name = "SESSION_ID")]
     pub resume: Option<String>,
+
+    /// Permission mode: auto | accept-edits | bypass (dangerous/yolo)
+    #[arg(long = "permission-mode", default_value = "auto", env = "DEVIN_PERMISSION_MODE")]
+    pub permission_mode: String,
 }
 
 #[derive(Subcommand, Debug)]
@@ -168,20 +172,22 @@ async fn main() -> Result<()> {
     let model = cli.model.clone().unwrap_or_else(|| models::DEFAULT_MODEL.to_string());
     let resume_id = cli.resume.clone();
     let continue_flag = cli.continue_session;
+    let perm_mode = agent::PermissionMode::parse(&cli.permission_mode);
 
     // one-shot print mode — runs the full agent (tools included), like `devin -p`
     if let Some(prompt) = cli.print.clone().flatten() {
         let client = protocol::Client::new(auth::resolve_api_key()?)?;
         let mut msgs = vec![json!({"role": "user", "content": prompt})];
         use std::io::Write;
+        let noninteractive_deny = perm_mode != agent::PermissionMode::Bypass;
         agent::run_agent(
             &client,
             &mut msgs,
             &model,
             chat::default_max_tokens(),
             24,
-            agent::PermissionMode::Auto,
-            true, // non-interactive: deny tools that would need approval
+            perm_mode,
+            noninteractive_deny,
             |ev| {
                 if let Some(t) = ev.text {
                     print!("{t}");
