@@ -98,5 +98,6 @@ for model access.** A working bridge would require a translation proxy
 Free plans enforce a message-rate limit on `GetChatMessage`:
 `resource_exhausted: Reached overall message rate limit for your free plan.
 Upgrade to Pro or Max for more generous rate limits.` — sliding-window gate.
-`swe-1-6-slow` is reliably callable on the free tier; most other models return
-`permission_denied` / `failed_precondition` (entitlement-dependent).
+`swe-2-high` is reliably callable on the free tier (as of 2026-09-11); most
+other models return `permission_denied` / `failed_precondition`
+(entitlement-dependent).

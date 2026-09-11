@@ -50,7 +50,7 @@ traffic (a capture-relay logged every request the real CLI made).
 10 tools (repeated)    {1 name, 2 description, 3 json_schema_string, 4 strict}
 16 cascade_id          (stable per conversation → prompt cache)
 20 planner_mode = 1
-21 chat_model_uid      (string: "swe-2-high", "claude-opus-4-7-medium", …)
+21 chat_model_uid      (string: "swe-2-high", "claude-opus-5-medium", …)
 22 execution_id
 ```
 
