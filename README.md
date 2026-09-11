@@ -39,6 +39,17 @@ devin auth login          # creates ~/.local/share/devin/credentials.toml
 .venv/bin/python -m opendevin serve --port 8321
 ```
 
+Or use the **standalone Rust CLI** (same features as `devin` + a bonus
+OpenAI-compatible server and web UI) — see `wiki/OpenDevin-CLI.md`:
+
+```bash
+cargo build -p opendevin --release && cp target/release/opendevin ~/.local/bin/
+opendevin -p "hi"            # one-shot (default model swe-2-high)
+opendevin chat               # REPL (streaming + thinking)
+opendevin serve              # OpenAI-compatible server + web UI on :8321
+opendevin models list        # live model catalog
+```
+
 Then point any OpenAI client at `http://127.0.0.1:8321/v1`:
 
 ```bash

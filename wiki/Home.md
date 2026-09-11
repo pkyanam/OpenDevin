@@ -15,7 +15,8 @@ lets any client (Hermes, Claude Code, Cursor) use Devin's models.
 | Page | What it covers |
 |---|---|
 | [Home](Home) | You are here |
-| [Source Code](Source-Code) | The reconstructed Rust workspace (`source/crates/**`) — 44 crates, 124 `.rs` files, module map |
+| [Source Code](Source-Code) | The reconstructed Devin CLI workspace (`source/crates/**`) — 44 crates, module map |
+| [OpenDevin CLI](OpenDevin-CLI) | The standalone `opendevin` binary — same features + bonus server/web UI |
 | [Decompilation](Decompilation) | How the binary was analyzed: Ghidra 12.1.3, the built arm64 decompiler, PyGhidra, live wire capture; decompiled functions |
 | [Protocol](Protocol) | The ConnectRPC `GetChatMessage` wire format, fully decoded from live traffic + official descriptors |
 | [Auth & API](Auth-and-API) | Endpoints, OAuth PKCE login, credentials.toml, token formats |
