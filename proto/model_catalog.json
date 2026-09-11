@@ -76,10 +76,6 @@
   "uid": "MODEL_PRIVATE_3"
  },
  {
-  "display": "Adaptive",
-  "uid": "adaptive"
- },
- {
   "display": "Claude Fable 5 High",
   "uid": "claude-5-fable-high"
  },
@@ -348,6 +344,18 @@
   "uid": "gemini-3-7-flash-medium"
  },
  {
+  "display": "Gemini 3.8 Flash High",
+  "uid": "gemini-3-8-flash-high"
+ },
+ {
+  "display": "Gemini 3.8 Flash Low",
+  "uid": "gemini-3-8-flash-low"
+ },
+ {
+  "display": "Gemini 3.8 Flash Medium",
+  "uid": "gemini-3-8-flash-medium"
+ },
+ {
   "display": "GLM-5.2 High",
   "uid": "glm-5-2"
  },
@@ -514,10 +522,6 @@
  {
   "display": "GPT-5.5 No Thinking Fast",
   "uid": "gpt-5-5-none-priority"
- },
- {
-  "display": "GPT 5.5 Review",
-  "uid": "gpt-5-5-review"
  },
  {
   "display": "GPT-5.5 XHigh Thinking",
@@ -784,10 +788,6 @@
   "uid": "kimi-k3-max"
  },
  {
-  "display": "Memory Migration Default",
-  "uid": "memory-migration-default"
- },
- {
   "display": "Nemotron 3 Ultra High",
   "uid": "nemotron-3-ultra-high"
  },
@@ -800,24 +800,12 @@
   "uid": "nemotron-3-ultra-none"
  },
  {
-  "display": "Opus 4.7 Review",
-  "uid": "opus-4-7-review"
- },
- {
-  "display": "Subagent Default",
-  "uid": "subagent-default"
- },
- {
   "display": "SWE-1.6",
   "uid": "swe-1-6"
  },
  {
   "display": "SWE-1.6 Fast",
   "uid": "swe-1-6-fast"
- },
- {
-  "display": "SWE-1.6 Slow",
-  "uid": "swe-1-6-slow"
  },
  {
   "display": "SWE-1.7 Max",
@@ -846,9 +834,5 @@
  {
   "display": "SWE-2 Medium",
   "uid": "swe-2-medium"
- },
- {
-  "display": "SWE-check",
-  "uid": "swe-check"
  }
 ]

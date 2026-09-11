@@ -24,18 +24,21 @@ custom_providers:
     base_url: http://127.0.0.1:8321/v1
     api_mode: chat_completions
     models:
-      - swe-2-high      # reliably callable on free plans
-      - swe-1-6
-      - swe-1-6-fast      # may hit per-account limits
+      - swe-2-high      # current SWE gen; reliably callable on free plans
+      - swe-2-max
+      - swe-2-medium
       - swe-1-7
-      - claude-opus-4-7-medium
-      - gpt-5-5-high
+      - claude-opus-5-medium
+      - gpt-6-astra-medium
+      - gemini-3-8-flash-medium
 ```
 
 > **Plan limits**: on free plans the backend enforces a message-rate limit
 > ("Reached overall message rate limit for your free plan") with a sliding
 > window. `swe-2-high` is the dependable default; other models are
 > entitlement-dependent. The bridge surfaces the upstream error verbatim.
+> `GET /v1/models` shows the live catalog for your account (as of 2026-09-11:
+> SWE-2, Claude Opus 5, GPT-6 Astra, Gemini 3.8, Grok 4.6, Kimi K3, …).
 
 ## Run order
 
@@ -52,5 +55,5 @@ hermes                               # then just use hermes normally
   `~/.local/share/devin/credentials.toml` (or `DEVIN_API_KEY`) itself.
 - The config above is currently applied to this machine
   (`~/.hermes/config.yaml`; backup: `~/.hermes/config.yaml.bak-opendevin`).
-- Any model UID your Devin account is entitled to works; list yours in
-  `~/.cache/devin/cli/model_configs_v5.*.bin`.
+- Any model UID your Devin account is entitled to works; `GET /v1/models` on
+  the bridge returns the live catalog (fetched from the Devin registry).
